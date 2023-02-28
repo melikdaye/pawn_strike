@@ -85,7 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Character currentCharacter = Character.pawn;
   Map borders = Map<dynamic,dynamic>.from({0:[1,3],1:[0,2,4],2:[1,5],3:[0,4,6],4:[1,3,5,7],5:[2,4,8],6:[3,7],7:[4,6,8],8:[5,7]});
   Random random = Random();
-
+  int nearestDistance = 0;
 
   @override
   void initState() {
@@ -177,6 +177,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
     foundFlags = 0;
     numberOfTurns = 0;
+    calculateProximity();
   }
 
   bool nearPuck(int index){
@@ -203,6 +204,29 @@ class _MyHomePageState extends State<MyHomePage> {
     }
 
     return false;
+  }
+
+  void calculateProximity(){
+
+      int px = puckIndex ~/ gridRow;
+      int py = puckIndex % gridRow;
+      List<int> coords = [];
+      for(var i=0; i < gridRow*gridRow; i++){
+        if(flagStates[i] && !selectionState[i]){
+          int sIndexX = i ~/ gridRow;
+          int sIndexY = i % gridRow;
+          int dx = (sIndexX - px)*(sIndexX - px);
+          int dy = (sIndexY - py)*(sIndexY - py);
+          int distance = sqrt(dx + dy).toInt();
+          coords.add(distance);
+        }
+      }
+      print(coords);
+      if(coords.isNotEmpty) {
+        setState(() {
+          nearestDistance = coords.reduce(min);
+        });
+      }
   }
 
   Future<bool> _showMyDialog() async {
@@ -342,6 +366,29 @@ class _MyHomePageState extends State<MyHomePage> {
          ),
        ),
 
+        if(numberOfTotalFlagFound >=0)
+        Padding(
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.1,right:  MediaQuery.of(context).size.width * 0.12),
+          child: Align(
+            alignment: Alignment.bottomRight,
+            child: SizedBox(
+              width: 200,
+              height: 30,
+              child: Text(
+                'PROXIMITY: ' + nearestDistance.toString(),
+                textAlign: TextAlign.left,
+                style: GoogleFonts.iceland(
+                  fontSize: 32 ,
+                  fontWeight: FontWeight.w400,
+                  height: 0.97,
+                  color: Color(0xffffffff),
+                ),
+              ),
+            ),
+          ),
+        ),
+
+
         Positioned(
           top: 0,
           height: MediaQuery.of(context).size.height * 1.1,
@@ -432,6 +479,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               puckIndex = index;
                               leftMoves-= (currentCharacter.index+1)*(currentCharacter.index+1);
                             });
+                          }
+                          if(numberOfTotalFlagFound >= 0){
+                            calculateProximity();
                           }
                         }
                       },
