@@ -87,7 +87,7 @@ class AdHelper {
     } else if (Platform.isIOS) {
       return '';
     } else {
-      throw new UnsupportedError('Unsupported platform');
+      throw UnsupportedError('Unsupported platform');
     }
   }
 
@@ -97,7 +97,7 @@ class AdHelper {
     } else if (Platform.isIOS) {
       return "";
     } else {
-      throw new UnsupportedError("Unsupported platform");
+      throw UnsupportedError("Unsupported platform");
     }
   }
 
@@ -107,7 +107,7 @@ class AdHelper {
     } else if (Platform.isIOS) {
       return "";
     } else {
-      throw new UnsupportedError("Unsupported platform");
+      throw UnsupportedError("Unsupported platform");
     }
   }
 }
@@ -149,5 +149,13 @@ void foundKingSound() async {
   if(soundState) {
     final player = AudioPlayer();
     return await player.play(AssetSource('knockDown.mp3'));
+  }
+}
+
+void buttonSound() async {
+  bool soundState = await getSoundState();
+  if(soundState) {
+    final player = AudioPlayer();
+    return await player.play(AssetSource('buttonClick.mp3'));
   }
 }

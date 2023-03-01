@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +24,7 @@ class _GameOverPage extends State<GameOver> {
   bool backToPage = false;
   @override
   void initState() {
-    // TODO: implement initState
+
     _createInterstitialAd();
     gameOverSound();
     super.initState();
@@ -39,16 +39,20 @@ class _GameOverPage extends State<GameOver> {
   void _createInterstitialAd() {
     InterstitialAd.load(
         adUnitId: AdHelper.interstitialAdUnitId,
-        request: AdRequest(),
+        request: const AdRequest(),
         adLoadCallback: InterstitialAdLoadCallback(
           onAdLoaded: (InterstitialAd ad) {
-            print('$ad loaded');
+            if (kDebugMode) {
+              print('$ad loaded');
+            }
             _interstitialAd = ad;
             _interstitialAd!.setImmersiveMode(true);
             _showInterstitialAd();
           },
           onAdFailedToLoad: (LoadAdError error) {
-            print('InterstitialAd failed to load: $error.');
+            if (kDebugMode) {
+              print('InterstitialAd failed to load: $error.');
+            }
             setState(() {
               backToPage = true;
             });
@@ -58,18 +62,23 @@ class _GameOverPage extends State<GameOver> {
 
   void _showInterstitialAd() {
     if (_interstitialAd == null) {
-      print('Warning: attempt to show interstitial before loaded.');
+      if (kDebugMode) {
+        print('Warning: attempt to show interstitial before loaded.');
+      }
       return;
     }
     _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (InterstitialAd ad) =>
-          print('ad onAdShowedFullScreenContent.'),
+      onAdShowedFullScreenContent: (InterstitialAd ad) => {},
       onAdDismissedFullScreenContent: (InterstitialAd ad) {
-        print('$ad onAdDismissedFullScreenContent.');
+        if (kDebugMode) {
+          print('$ad onAdDismissedFullScreenContent.');
+        }
         ad.dispose();
       },
       onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
-        print('$ad onAdFailedToShowFullScreenContent: $error');
+        if (kDebugMode) {
+          print('$ad onAdFailedToShowFullScreenContent: $error');
+        }
         ad.dispose();
       },
     );
@@ -91,7 +100,7 @@ class _GameOverPage extends State<GameOver> {
         decoration: const BoxDecoration(
             color: Color(0xffffffff),
             image: DecorationImage(
-              image: AssetImage("assets/checkerbg.jpg"),
+              image: AssetImage("assets/checkerbg.jpeg"),
               fit: BoxFit.fill,
             )),
         child: Stack(
@@ -104,7 +113,7 @@ class _GameOverPage extends State<GameOver> {
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height * 0.18,
                   child: Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Color(0xff000000),
                     ),
                   ),
@@ -125,7 +134,7 @@ class _GameOverPage extends State<GameOver> {
                         fontSize: 44 * ffem,
                         fontWeight: FontWeight.w400,
                         height: 0.97 * ffem / fem,
-                        color: Color(0xffEFA617),
+                        color: const Color(0xffEFA617),
                       ),
                     ),
                   ),
@@ -145,7 +154,7 @@ class _GameOverPage extends State<GameOver> {
                       fontSize: 32 * ffem,
                       fontWeight: FontWeight.w400,
                       height: 0.97 * ffem / fem,
-                      color: Color(0xffffffff),
+                      color: const Color(0xffffffff),
                     ),
                   ),
                 ),
@@ -165,7 +174,7 @@ class _GameOverPage extends State<GameOver> {
                       fontSize: 32 * ffem,
                       fontWeight: FontWeight.w400,
                       height: 0.97 * ffem / fem,
-                      color: Color(0xffffffff),
+                      color: const Color(0xffffffff),
                     ),
                   ),
                 ),
@@ -181,13 +190,18 @@ class _GameOverPage extends State<GameOver> {
                     children: [
 
                       GestureDetector(
-                        onTap: (){
-                          Navigator.of(context).push(MaterialPageRoute(builder: ((context) => MainMenu())));
+                        onTap: () async {
+                          buttonSound();
+                          Future.delayed(Duration(milliseconds: await getSoundState() ? 300 : 0), ()
+                          {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: ((context) => const MainMenu())));
+                          });
                         },
                         child: Container(
                           width:  MediaQuery.of(context).size.width * 0.35,
                           height: MediaQuery.of(context).size.height * 0.25,
-                          decoration:  BoxDecoration (
+                          decoration:  const BoxDecoration (
                             image:  DecorationImage (
                               fit:  BoxFit.fill,
                               image:  AssetImage (
@@ -206,20 +220,28 @@ class _GameOverPage extends State<GameOver> {
                                 fontSize:  30.4530124664*ffem,
                                 fontWeight:  FontWeight.w400,
                                 height:  0.97*ffem/fem,
-                                color:  Color(0xffffffff),
+                                color:  const Color(0xffffffff),
                               ),
                             ),
                           ),
                         ),
                       ),
                       GestureDetector(
-                        onTap: (){
-                            Navigator.of(context).push(MaterialPageRoute(builder: ((context) => const MyHomePage(level: 1,leftMoves: 8,numberOfTotalFlagFound: 0,))));
+                        onTap: () async {
+                            buttonSound();
+                            Future.delayed(Duration(milliseconds: await getSoundState() ? 300 : 0), ()
+                            {
+                              Navigator.of(context).push(MaterialPageRoute(
+                                  builder: ((context) => const MyHomePage(
+                                    level: 1,
+                                    leftMoves: 8,
+                                    numberOfTotalFlagFound: 0,))));
+                            });
                         },
                         child: Container(
                           width:  MediaQuery.of(context).size.width * 0.35,
                           height: MediaQuery.of(context).size.height * 0.25,
-                          decoration:  BoxDecoration (
+                          decoration:  const BoxDecoration (
                             image:  DecorationImage (
                               fit:  BoxFit.fill,
                               image:  AssetImage (
@@ -238,7 +260,7 @@ class _GameOverPage extends State<GameOver> {
                                 fontSize:  30.4530124664*ffem,
                                 fontWeight:  FontWeight.w400,
                                 height:  0.97*ffem/fem,
-                                color:  Color(0xffffffff),
+                                color:  const Color(0xffffffff),
                               ),
                             ),
                           ),

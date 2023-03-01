@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'package:pawn_strike/gameOver.dart';
@@ -167,7 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
     puckIndex = random.nextInt(gridRow*gridRow);
     for(var i=0; i<randomFlagCount; i++){
       int index = random.nextInt(gridRow*gridRow);
-      while (randomIndex.contains(index)){
+      while (randomIndex.contains(index) || puckIndex == index){
           index = random.nextInt(gridRow*gridRow);
       }
 
@@ -221,7 +221,9 @@ class _MyHomePageState extends State<MyHomePage> {
           coords.add(distance);
         }
       }
-      print(coords);
+      if (kDebugMode) {
+        print(coords);
+      }
       if(coords.isNotEmpty) {
         setState(() {
           nearestDistance = coords.reduce(min);
@@ -233,7 +235,7 @@ class _MyHomePageState extends State<MyHomePage> {
     return (await showDialog(
       context: context,
       barrierDismissible: true, // user must tap button!
-      barrierColor: Color(0xffEFA617),
+      barrierColor: const Color(0xffEFA617),
       builder: (BuildContext context) {
         return AlertDialog(
           content: SingleChildScrollView(
@@ -246,7 +248,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     fontSize:  30.4530124664,
                     fontWeight:  FontWeight.w400,
                     height:  0.97,
-                    color:  Color(0xff000000),
+                    color:  const Color(0xff000000),
                   ),
                 ),
               ],
@@ -262,7 +264,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   color:  Colors.redAccent,
                 )),
                 onPressed: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: ((context) => MainMenu())));                },
+                  Navigator.of(context).push(MaterialPageRoute(builder: ((context) => const MainMenu())));                },
               ),
             ),
             Center(
@@ -311,11 +313,12 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text(
                 'MOVES: ' + leftMoves.toString(),
                 textAlign: TextAlign.center,
-                style: GoogleFonts.iceland(
+                style: GoogleFonts.itim(
                   fontSize: 32 ,
                   fontWeight: FontWeight.w400,
                   height: 0.97,
-                  color: Color(0xffffffff),
+                  color: const Color(0xffffffff),
+                  decoration: TextDecoration.none
                 ),
               ),
             ),
@@ -331,11 +334,12 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text(
                 'LVL ' + level.toString(),
                 textAlign: TextAlign.center,
-                style: GoogleFonts.iceland(
+                style: GoogleFonts.itim(
                   fontSize: 32 ,
                   fontWeight: FontWeight.w400,
                   height: 0.97,
-                  color: Color(0xffffffff),
+                  color: const Color(0xffffffff),
+                  decoration: TextDecoration.none
                 ),
               ),
             ),
@@ -360,15 +364,15 @@ class _MyHomePageState extends State<MyHomePage> {
                           fit: BoxFit.fill,
                         ),
                       ))
-                : SizedBox(),
+                : const SizedBox(),
               ],
             ),
          ),
        ),
 
-        if(numberOfTotalFlagFound >=0)
+        if(currentCharacter.index  >= Character.bishop.index)
         Padding(
-          padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.1,right:  MediaQuery.of(context).size.width * 0.12),
+          padding: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.1,right:  MediaQuery.of(context).size.width * 0.07),
           child: Align(
             alignment: Alignment.bottomRight,
             child: SizedBox(
@@ -377,11 +381,12 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Text(
                 'PROXIMITY: ' + nearestDistance.toString(),
                 textAlign: TextAlign.left,
-                style: GoogleFonts.iceland(
+                style: GoogleFonts.itim(
                   fontSize: 32 ,
                   fontWeight: FontWeight.w400,
                   height: 0.97,
-                  color: Color(0xffffffff),
+                  color: const Color(0xffffffff),
+                  decoration: TextDecoration.none
                 ),
               ),
             ),
@@ -425,7 +430,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   0,0,1,0,
                                   0,0,0,1.3,
                                 )..rotateZ(-0.8),
-                                    alignment: FractionalOffset.center,child: Image.asset(characterAssets[currentCharacter])):SizedBox(),
+                                    alignment: FractionalOffset.center,child: Image.asset(characterAssets[currentCharacter])):const SizedBox(),
 
                           decoration: BoxDecoration(shape: BoxShape.rectangle, border: Border.all(width: 3.0,color: Colors.white),color: colorStates[index],
                           )),
@@ -480,7 +485,7 @@ class _MyHomePageState extends State<MyHomePage> {
                               leftMoves-= (currentCharacter.index+1)*(currentCharacter.index+1);
                             });
                           }
-                          if(numberOfTotalFlagFound >= 0){
+                          if(currentCharacter.index >= Character.bishop.index){
                             calculateProximity();
                           }
                         }

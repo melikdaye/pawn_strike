@@ -1,6 +1,4 @@
-import 'dart:ui';
-
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +22,6 @@ class _NextLevelPage extends State<NextLevel> {
   double ffem = 1;
 
   RewardedAd? _rewardedAd;
-  late int _numInterstitialLoadAttempts;
   int leftMoves = 0;
   bool backToPage = false;
   @override
@@ -50,17 +47,20 @@ class _NextLevelPage extends State<NextLevel> {
   void _createRewardedAd() {
     RewardedAd.load(
         adUnitId: AdHelper.rewardedAdUnitId,
-        request: AdRequest(),
+        request: const AdRequest(),
         rewardedAdLoadCallback: RewardedAdLoadCallback(
           onAdLoaded: (RewardedAd ad) {
-            print('$ad rewarded add loaded');
+            if (kDebugMode) {
+              print('$ad rewarded add loaded');
+            }
             _rewardedAd = ad;
-            _numInterstitialLoadAttempts = 0;
             _rewardedAd!.setImmersiveMode(true);
             _showMyDialog();
           },
           onAdFailedToLoad: (LoadAdError error) {
-            print('RewardedAd failed to load: $error.');
+            if (kDebugMode) {
+              print('RewardedAd failed to load: $error.');
+            }
             setState(() {
               backToPage = true;
             });
@@ -71,18 +71,23 @@ class _NextLevelPage extends State<NextLevel> {
 
   void _showRewardedAd() {
     if (_rewardedAd == null) {
-      print('Warning: attempt to show interstitial before loaded.');
+      if (kDebugMode) {
+        print('Warning: attempt to show interstitial before loaded.');
+      }
       return;
     }
     _rewardedAd!.fullScreenContentCallback = FullScreenContentCallback(
-      onAdShowedFullScreenContent: (RewardedAd ad) =>
-          print('ad onAdShowedFullScreenContent.'),
+      onAdShowedFullScreenContent: (RewardedAd ad) => {},
       onAdDismissedFullScreenContent: (RewardedAd ad) {
-        print('$ad onAdDismissedFullScreenContent.');
+        if (kDebugMode) {
+          print('$ad onAdDismissedFullScreenContent.');
+        }
         ad.dispose();
       },
       onAdFailedToShowFullScreenContent: (RewardedAd ad, AdError error) {
-        print('$ad onAdFailedToShowFullScreenContent: $error');
+        if (kDebugMode) {
+          print('$ad onAdFailedToShowFullScreenContent: $error');
+        }
         ad.dispose();
         _createRewardedAd();
       },
@@ -102,7 +107,7 @@ class _NextLevelPage extends State<NextLevel> {
     return (await showDialog(
       context: context,
       barrierDismissible: true, // user must tap button!
-      barrierColor: Color(0xffEFA617),
+      barrierColor: const Color(0xffEFA617),
       builder: (BuildContext context) {
         return AlertDialog(
           content: SingleChildScrollView(
@@ -115,7 +120,7 @@ class _NextLevelPage extends State<NextLevel> {
                     fontSize:  30.4530124664,
                     fontWeight:  FontWeight.w400,
                     height:  0.97,
-                    color:  Color(0xff000000),
+                    color:  const Color(0xff000000),
                   ),
                 ),
               ],
@@ -167,7 +172,7 @@ class _NextLevelPage extends State<NextLevel> {
         decoration: const BoxDecoration(
             color: Color(0xffffffff),
             image: DecorationImage(
-              image: AssetImage("assets/checkerbg.jpg"),
+              image: AssetImage("assets/checkerbg.jpeg"),
               fit: BoxFit.fill,
             )),
         child: Stack(
@@ -180,7 +185,7 @@ class _NextLevelPage extends State<NextLevel> {
                   width: MediaQuery.of(context).size.width,
                   height: MediaQuery.of(context).size.height * 0.18,
                   child: Container(
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: Color(0xff000000),
                     ),
                   ),
@@ -201,7 +206,7 @@ class _NextLevelPage extends State<NextLevel> {
                       fontSize: 44 * ffem,
                       fontWeight: FontWeight.w400,
                       height: 0.97 * ffem / fem,
-                      color: Color(0xffEFA617),
+                      color: const Color(0xffEFA617),
                     ),
                   ),
                 ),
@@ -221,7 +226,7 @@ class _NextLevelPage extends State<NextLevel> {
                       fontSize: 32 * ffem,
                       fontWeight: FontWeight.w400,
                       height: 0.97 * ffem / fem,
-                      color: Color(0xffffffff),
+                      color: const Color(0xffffffff),
                     ),
                   ),
                 ),
@@ -241,7 +246,7 @@ class _NextLevelPage extends State<NextLevel> {
                       fontSize: 32 * ffem,
                       fontWeight: FontWeight.w400,
                       height: 0.97 * ffem / fem,
-                      color: Color(0xffffffff),
+                      color: const Color(0xffffffff),
                     ),
                   ),
                 ),
@@ -268,7 +273,7 @@ class _NextLevelPage extends State<NextLevel> {
                                     fontSize: 32 * ffem,
                                     fontWeight: FontWeight.w400,
                                     height: 0.97 * ffem / fem,
-                                    color: Color(0xffffffff),
+                                    color: const Color(0xffffffff),
                                   ),
                                 ),
                               ),
@@ -278,7 +283,7 @@ class _NextLevelPage extends State<NextLevel> {
                                   child: Container(
                                     width:  MediaQuery.of(context).size.width * 0.05,
                                     height: MediaQuery.of(context).size.height * 0.08,
-                                    decoration:  BoxDecoration (
+                                    decoration:  const BoxDecoration (
                                       image:  DecorationImage (
                                         fit:  BoxFit.contain,
                                         image:  AssetImage (
@@ -319,7 +324,7 @@ class _NextLevelPage extends State<NextLevel> {
                                         fontSize: 32 * ffem,
                                         fontWeight: FontWeight.w400,
                                         height: 0.97 * ffem / fem,
-                                        color: Color(0xffffffff),
+                                        color: const Color(0xffffffff),
                                       ),
                                     ),
                                   ),
@@ -336,7 +341,7 @@ class _NextLevelPage extends State<NextLevel> {
                                         fontSize: 32 * ffem,
                                         fontWeight: FontWeight.w400,
                                         height: 0.97 * ffem / fem,
-                                        color: Color(0xffffffff),
+                                        color: const Color(0xffffffff),
                                       ),
                                     ),
                                   ),
@@ -346,7 +351,7 @@ class _NextLevelPage extends State<NextLevel> {
                                   child: Container(
                                     width:  MediaQuery.of(context).size.width * 0.05,
                                     height: MediaQuery.of(context).size.height * 0.08,
-                                    decoration:  BoxDecoration (
+                                    decoration:  const BoxDecoration (
                                       image:  DecorationImage (
                                         fit:  BoxFit.contain,
                                         image:  AssetImage (
@@ -376,13 +381,18 @@ class _NextLevelPage extends State<NextLevel> {
                   children: [
 
                     GestureDetector(
-                      onTap: (){
-                        Navigator.of(context).push(MaterialPageRoute(builder: ((context) => MainMenu())));
+                      onTap: () async {
+                        buttonSound();
+                        Future.delayed(Duration(milliseconds: await getSoundState() ? 300 : 0), ()
+                        {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: ((context) => const MainMenu())));
+                        });
                       },
                       child: Container(
                         width:  MediaQuery.of(context).size.width * 0.35,
                         height: MediaQuery.of(context).size.height * 0.25,
-                        decoration:  BoxDecoration (
+                        decoration:  const BoxDecoration (
                           image:  DecorationImage (
                             fit:  BoxFit.fill,
                             image:  AssetImage (
@@ -401,20 +411,27 @@ class _NextLevelPage extends State<NextLevel> {
                               fontSize:  30.4530124664*ffem,
                               fontWeight:  FontWeight.w400,
                               height:  0.97*ffem/fem,
-                              color:  Color(0xffffffff),
+                              color:  const Color(0xffffffff),
                             ),
                           ),
                         ),
                       ),
                     ),
                     GestureDetector(
-                      onTap: (){
-                        Navigator.of(context).push(MaterialPageRoute(builder: ((context) => MyHomePage(level: widget.level+1,numberOfTotalFlagFound: widget.flagCount,leftMoves: leftMoves,))));
+                      onTap: () async {
+                        buttonSound();
+                        Future.delayed(Duration(milliseconds: await getSoundState() ? 300 : 0), () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: ((context) =>
+                                  MyHomePage(level: widget.level + 1,
+                                    numberOfTotalFlagFound: widget.flagCount,
+                                    leftMoves: leftMoves,))));
+                        });
                       },
                       child: Container(
                         width:  MediaQuery.of(context).size.width * 0.35,
                         height: MediaQuery.of(context).size.height * 0.25,
-                        decoration:  BoxDecoration (
+                        decoration:  const BoxDecoration (
                           image:  DecorationImage (
                             fit:  BoxFit.fill,
                             image:  AssetImage (
@@ -433,7 +450,7 @@ class _NextLevelPage extends State<NextLevel> {
                               fontSize:  30.4530124664*ffem,
                               fontWeight:  FontWeight.w400,
                               height:  0.97*ffem/fem,
-                              color:  Color(0xffffffff),
+                              color:  const Color(0xffffffff),
                             ),
                           ),
                         ),

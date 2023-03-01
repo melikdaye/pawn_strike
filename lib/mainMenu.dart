@@ -1,9 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:pawn_strike/main.dart';
 import 'package:pawn_strike/settings.dart';
+
+import 'constants.dart';
 
 class MainMenu extends StatefulWidget {
   const MainMenu({Key? key}) : super(key: key);
@@ -27,7 +28,7 @@ class _MainMenuPage extends State<MainMenu> {
     return (await showDialog(
       context: context,
       barrierDismissible: true, // user must tap button!
-      barrierColor: Color(0xffEFA617),
+      barrierColor: const Color(0xffEFA617),
       builder: (BuildContext context) {
         return AlertDialog(
           content: SingleChildScrollView(
@@ -40,7 +41,7 @@ class _MainMenuPage extends State<MainMenu> {
                     fontSize:  30.4530124664,
                     fontWeight:  FontWeight.w400,
                     height:  0.97,
-                    color:  Color(0xff000000),
+                    color:  const Color(0xff000000),
                   ),
                 ),
               ],
@@ -89,7 +90,7 @@ class _MainMenuPage extends State<MainMenu> {
           decoration: const BoxDecoration(
               color: Color(0xffffffff),
               image: DecorationImage(
-                image: AssetImage("assets/checkerbg.jpg"),
+                image: AssetImage("assets/checkerbg.jpeg"),
                 fit: BoxFit.fill,
               )),
           child: Stack(
@@ -104,7 +105,7 @@ class _MainMenuPage extends State<MainMenu> {
                     child: Container(
                       width:MediaQuery.of(context).size.width * 0.8,
                       height:MediaQuery.of(context).size.height * 0.8,
-                      decoration:  BoxDecoration(
+                      decoration:  const BoxDecoration(
                           image: DecorationImage(
                             image: AssetImage("assets/scene.png"),
                             fit: BoxFit.contain,
@@ -126,8 +127,8 @@ class _MainMenuPage extends State<MainMenu> {
                         fontSize: 74 * ffem,
                         fontWeight: FontWeight.w700,
                         height: 0.97 * ffem / fem,
-                        color: Color(0xffEFA617),
-                        shadows: <Shadow>[BoxShadow(
+                        color: const Color(0xffEFA617),
+                        shadows: <Shadow>[const BoxShadow(
                           offset: Offset(0.0, 0.0),
                           blurRadius: 12.0,
                           spreadRadius: 5,
@@ -149,14 +150,22 @@ class _MainMenuPage extends State<MainMenu> {
                     children: [
 
                       GestureDetector(
-                        onTap: (){
-                          Navigator.of(context).push(MaterialPageRoute(builder: ((context) => const MyHomePage(level: 1,leftMoves: 8,numberOfTotalFlagFound: 0,))));
+                        onTap: () async {
+                          buttonSound();
+                          Future.delayed(Duration(milliseconds: await getSoundState() ? 300 : 0), ()
+                          {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: ((context) =>
+                                const MyHomePage(level: 1,
+                                  leftMoves: 8,
+                                  numberOfTotalFlagFound: 0,))));
+                          });
                         },
                         child: Container(
                           width:  MediaQuery.of(context).size.width * 0.35,
                           height: MediaQuery.of(context).size.height * 0.25,
                           alignment: Alignment.center,
-                          decoration:  BoxDecoration (
+                          decoration:  const BoxDecoration (
                             image:  DecorationImage (
                               fit:  BoxFit.fill,
                               image:  AssetImage (
@@ -175,20 +184,25 @@ class _MainMenuPage extends State<MainMenu> {
                                 fontSize:  30.4530124664*ffem,
                                 fontWeight:  FontWeight.w400,
                                 height:  0.97*ffem/fem,
-                                color:  Color(0xffffffff),
+                                color:  const Color(0xffffffff),
                               ),
                             ),
                           ),
                         ),
                       ),
                       GestureDetector(
-                        onTap: (){
-                          Navigator.of(context).push(MaterialPageRoute(builder: ((context) => const Settings())));
+                        onTap: () async {
+                          buttonSound();
+                          Future.delayed(Duration(milliseconds: await getSoundState() ? 300 : 0), ()
+                          {
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: ((context) => const Settings())));
+                          });
                         },
                         child: Container(
                           width:  MediaQuery.of(context).size.width * 0.35,
                           height: MediaQuery.of(context).size.height * 0.25,
-                          decoration:  BoxDecoration (
+                          decoration:  const BoxDecoration (
                             image:  DecorationImage (
                               fit:  BoxFit.fill,
                               image:  AssetImage (
@@ -207,7 +221,7 @@ class _MainMenuPage extends State<MainMenu> {
                                 fontSize:  30.4530124664*ffem,
                                 fontWeight:  FontWeight.w400,
                                 height:  0.97*ffem/fem,
-                                color:  Color(0xffffffff),
+                                color:  const Color(0xffffffff),
                               ),
                             ),
                           ),
