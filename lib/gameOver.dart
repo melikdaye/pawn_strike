@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:pawn_strike/addProvider.dart';
 import 'package:pawn_strike/constants.dart';
 import 'package:pawn_strike/main.dart';
+import 'package:provider/provider.dart';
 
 import 'mainMenu.dart';
 
@@ -24,7 +26,7 @@ class _GameOverPage extends State<GameOver> {
   bool backToPage = false;
   @override
   void initState() {
-
+    _interstitialAd = Provider.of<AddManagement>(context, listen: false).interstitialAd;
     _createInterstitialAd();
     gameOverSound();
     super.initState();
@@ -37,27 +39,33 @@ class _GameOverPage extends State<GameOver> {
   }
 
   void _createInterstitialAd() {
-    InterstitialAd.load(
-        adUnitId: AdHelper.interstitialAdUnitId,
-        request: const AdRequest(),
-        adLoadCallback: InterstitialAdLoadCallback(
-          onAdLoaded: (InterstitialAd ad) {
-            if (kDebugMode) {
-              print('$ad loaded');
-            }
-            _interstitialAd = ad;
-            _interstitialAd!.setImmersiveMode(true);
-            _showInterstitialAd();
-          },
-          onAdFailedToLoad: (LoadAdError error) {
-            if (kDebugMode) {
-              print('InterstitialAd failed to load: $error.');
-            }
-            setState(() {
-              backToPage = true;
-            });
-          },
-        ));
+
+    if(_interstitialAd == null) {
+      InterstitialAd.load(
+          adUnitId: AdHelper.interstitialAdUnitId,
+          request: const AdRequest(),
+          adLoadCallback: InterstitialAdLoadCallback(
+            onAdLoaded: (InterstitialAd ad) {
+              if (kDebugMode) {
+                print('$ad loaded');
+              }
+              _interstitialAd = ad;
+              _interstitialAd!.setImmersiveMode(true);
+              _showInterstitialAd();
+            },
+            onAdFailedToLoad: (LoadAdError error) {
+              if (kDebugMode) {
+                print('InterstitialAd failed to load: $error.');
+              }
+              setState(() {
+                backToPage = true;
+              });
+            },
+          ));
+    }
+    else{
+      _showInterstitialAd();
+    }
   }
 
   void _showInterstitialAd() {
@@ -84,6 +92,7 @@ class _GameOverPage extends State<GameOver> {
     );
     _interstitialAd!.show();
     _interstitialAd = null;
+    Provider.of<AddManagement>(context, listen: false).disposeInterstitialAd();
     setState(() {
       backToPage = true;
     });
@@ -235,7 +244,7 @@ class _GameOverPage extends State<GameOver> {
                                   builder: ((context) => const MyHomePage(
                                     level: 1,
                                     leftMoves: 8,
-                                    numberOfTotalFlagFound: 0,))));
+                                    numberOfTotalFlagFound: 0))));
                             });
                         },
                         child: Container(

@@ -3,8 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:pawn_strike/addProvider.dart';
 import 'package:pawn_strike/main.dart';
 import 'package:pawn_strike/mainMenu.dart';
+import 'package:provider/provider.dart';
 
 import 'constants.dart';
 
@@ -13,6 +15,7 @@ class NextLevel extends StatefulWidget {
   final int level;
   final int flagCount;
   final int moves;
+
   @override
   State<NextLevel> createState() => _NextLevelPage();
 }
@@ -20,8 +23,8 @@ class NextLevel extends StatefulWidget {
 class _NextLevelPage extends State<NextLevel> {
   double fem = 1.3;
   double ffem = 1;
-
   RewardedAd? _rewardedAd;
+
   int leftMoves = 0;
   bool backToPage = false;
   @override
@@ -33,39 +36,40 @@ class _NextLevelPage extends State<NextLevel> {
     ]);
     leftMoves = widget.moves;
     super.initState();
+    _rewardedAd = Provider.of<AddManagement>(context, listen: false).rewardedAd;
     if(widget.flagCount >= 10 && widget.moves <= 40){
       _createRewardedAd();
     }
     else{
       backToPage = true;
     }
-
-
-
   }
-
   void _createRewardedAd() {
-    RewardedAd.load(
-        adUnitId: AdHelper.rewardedAdUnitId,
-        request: const AdRequest(),
-        rewardedAdLoadCallback: RewardedAdLoadCallback(
-          onAdLoaded: (RewardedAd ad) {
-            if (kDebugMode) {
-              print('$ad rewarded add loaded');
-            }
-            _rewardedAd = ad;
-            _rewardedAd!.setImmersiveMode(true);
-            _showMyDialog();
-          },
-          onAdFailedToLoad: (LoadAdError error) {
-            if (kDebugMode) {
-              print('RewardedAd failed to load: $error.');
-            }
-            setState(() {
-              backToPage = true;
-            });
-          },
-        ));
+    if(_rewardedAd == null) {
+      RewardedAd.load(
+          adUnitId: AdHelper.rewardedAdUnitId,
+          request: const AdRequest(),
+          rewardedAdLoadCallback: RewardedAdLoadCallback(
+            onAdLoaded: (RewardedAd ad) {
+              if (kDebugMode) {
+                print('$ad rewarded add loaded');
+              }
+              _rewardedAd = ad;
+              _rewardedAd!.setImmersiveMode(true);
+              _showMyDialog();
+            },
+            onAdFailedToLoad: (LoadAdError error) {
+              if (kDebugMode) {
+                print('RewardedAd failed to load: $error.');
+              }
+              setState(() {
+                backToPage = true;
+              });
+            },
+          ));
+    }else{
+      _showMyDialog();
+    }
   }
 
 
@@ -100,8 +104,10 @@ class _NextLevelPage extends State<NextLevel> {
 
     });
     _rewardedAd = null;
+    Provider.of<AddManagement>(context, listen: false).disposeRewardedAd();
     Navigator.of(context).pop();
   }
+
 
   Future<bool> _showMyDialog() async {
     return (await showDialog(
@@ -254,8 +260,8 @@ class _NextLevelPage extends State<NextLevel> {
             ),
             Column(
               children: [
-                for(var i=0;i<4;i++)
-                  if((widget.flagCount>=kingsToLevel.keys.toList()[i][0] && widget.flagCount<kingsToLevel.keys.toList()[i][1]) || (widget.flagCount>0 && widget.flagCount<10 && i==0))
+                for(var i=0;i<5;i++)
+                  if((widget.flagCount>=kingsToLevel.keys.toList()[i][0] && widget.flagCount<kingsToLevel.keys.toList()[i][1]))
                 Padding(
                   padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.40,right: MediaQuery.of(context).size.width * 0.08),
                   child: Align(
@@ -267,7 +273,7 @@ class _NextLevelPage extends State<NextLevel> {
                                 width: 32 * fem,
                                 height: 22 * fem,
                                 child: Text(
-                                  kingsToLevel.keys.toList()[i][0].toString(),
+                                  kingsToLevel.keys.toList()[i+1][0].toString(),
                                   textAlign: TextAlign.center,
                                   style: GoogleFonts.itim(
                                     fontSize: 32 * ffem,
@@ -307,7 +313,7 @@ class _NextLevelPage extends State<NextLevel> {
                                     image:  DecorationImage (
                                       fit:  BoxFit.contain,
                                       image:  AssetImage (
-                                          characterAssets[kingsToLevel[kingsToLevel.keys.toList()[i]][0]]
+                                          characterAssets[kingsToLevel[kingsToLevel.keys.toList()[i+1]][0]]
                                       ),
                                     ),
                                   ),
@@ -318,7 +324,7 @@ class _NextLevelPage extends State<NextLevel> {
                                     width: 60 * fem,
                                     height: 22 * fem,
                                     child: Text(
-                                      kingsToLevel[kingsToLevel.keys.toList()[i]][1].toString() + "x" + kingsToLevel[kingsToLevel.keys.toList()[i]][1].toString(),
+                                      kingsToLevel[kingsToLevel.keys.toList()[i+1]][1].toString() + "x" + kingsToLevel[kingsToLevel.keys.toList()[i+1]][1].toString(),
                                       textAlign: TextAlign.center,
                                       style: GoogleFonts.itim(
                                         fontSize: 32 * ffem,
@@ -335,7 +341,7 @@ class _NextLevelPage extends State<NextLevel> {
                                     width: 42 * fem,
                                     height: 22 * fem,
                                     child: Text(
-                                      kingsToLevel[kingsToLevel.keys.toList()[i]][2][0].toString() + '-' + kingsToLevel[kingsToLevel.keys.toList()[i]][2][1].toString(),
+                                      kingsToLevel[kingsToLevel.keys.toList()[i+1]][2][0].toString() + '-' + kingsToLevel[kingsToLevel.keys.toList()[i+1]][2][1].toString(),
                                       textAlign: TextAlign.left,
                                       style: GoogleFonts.itim(
                                         fontSize: 32 * ffem,
@@ -467,6 +473,7 @@ class _NextLevelPage extends State<NextLevel> {
         ),
       ),
     ),
-    ) : Container();
+    ) :
+      Container();
   }
 }

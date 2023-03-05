@@ -8,7 +8,7 @@ enum Character{
   rook,
   queen,
 }
-Map kingsToLevel = Map<List<int>,List<dynamic>>.from({[10,20]:[Character.bishop,4,[2,4]],[20,30]:[Character.knight,5,[3,5]],[30,40]:[Character.rook,5,[4,6]],[40,80]:[Character.queen,6,[4,6]]});
+Map kingsToLevel = Map<List<int>,List<dynamic>>.from({[0,10]:[Character.pawn,3,[1,2]],[10,20]:[Character.bishop,4,[2,4]],[20,30]:[Character.knight,5,[3,5]],[30,40]:[Character.rook,5,[4,6]],[40,80]:[Character.queen,6,[4,6]]});
 Map characterAssets = Map<Character,String>.from({Character.knight:"assets/knight.png",Character.bishop:"assets/bishop.png",Character.pawn:"assets/pawn.png",Character.queen:"assets/queen.png",Character.rook:"assets/rook.png"});
 
 int getGridCount(int numberOfFlags){
@@ -45,7 +45,7 @@ int getMinKingCount(int numberOfFlags){
 
 int getMaxKingCount(int numberOfFlags){
   for(var i=0; i<kingsToLevel.keys.toList().length;i++){
-    if(numberOfFlags>=kingsToLevel.keys.toList()[i][0] && numberOfFlags<kingsToLevel.keys.toList()[i][1]){
+    if(numberOfFlags>kingsToLevel.keys.toList()[i][0] && numberOfFlags<=kingsToLevel.keys.toList()[i][1]){
       return kingsToLevel[kingsToLevel.keys.toList()[i]][2][1];
     }
   }

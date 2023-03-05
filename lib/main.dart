@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
+import 'package:pawn_strike/addProvider.dart';
 import 'package:pawn_strike/gameOver.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:core';
@@ -9,10 +10,16 @@ import 'package:pawn_strike/constants.dart';
 import 'package:pawn_strike/mainMenu.dart';
 import 'package:pawn_strike/nextLevel.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:provider/provider.dart';
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   MobileAds.instance.initialize();
-  runApp(const MyApp());
+  runApp(
+      ChangeNotifierProvider(
+      create : (context) => AddManagement(),
+      child : const MyApp()
+      ),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -87,6 +94,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Random random = Random();
   int nearestDistance = 0;
 
+
   @override
   void initState() {
     super.initState();
@@ -97,8 +105,11 @@ class _MyHomePageState extends State<MyHomePage> {
     currentCharacter = getCharacterType(numberOfTotalFlagFound);
     minKingCount = getMinKingCount(numberOfTotalFlagFound);
     maxKingCount = getMaxKingCount(numberOfTotalFlagFound);
-    resetGame();
     startSound();
+    resetGame();
+    Provider.of<AddManagement>(context, listen: false).createInterstitialAd();
+    Provider.of<AddManagement>(context, listen: false).createRewardedAd();
+
   }
 
   bool knightMovement(int index){
@@ -162,7 +173,10 @@ class _MyHomePageState extends State<MyHomePage> {
     colorStates = List<Color>.filled(gridRow*gridRow, Colors.transparent);
     flagStates = List<bool>.filled(gridRow*gridRow,false);
     selectionState = List<bool>.filled(gridRow*gridRow,false);
-    randomFlagCount = minKingCount + random.nextInt(maxKingCount);
+    randomFlagCount = minKingCount + random.nextInt(maxKingCount-minKingCount+1);
+    if(kDebugMode){
+      print("$randomFlagCount,$minKingCount,$maxKingCount");
+    }
     List<int> randomIndex = [];
     puckIndex = random.nextInt(gridRow*gridRow);
     for(var i=0; i<randomFlagCount; i++){
@@ -396,13 +410,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
         Positioned(
           top: 0,
-          height: MediaQuery.of(context).size.height * 1.1,
+          height: MediaQuery.of(context).size.height * 1.2,
           child: Transform(
             transform: Matrix4(
               1,0,0,0,
               0,1,0,0,
               0,0,1,0,
-              MediaQuery.of(context).size.width * 0.22,0,0,0.9,
+              MediaQuery.of(context).size.width * 0.22,-MediaQuery.of(context).size.height * 0.1,0,0.9,
             )..rotateX(1.2)..rotateY(0)..rotateZ(0.8),
             alignment: FractionalOffset.center,
             child: Container(
@@ -444,6 +458,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 colorStates[index] = const Color(0xff0E6C39);
                                 foundFlags++;
                                 numberOfTotalFlagFound++;
+                                leftMoves+=(currentCharacter.index)*4;
                                 if (foundFlags == randomFlagCount) {
                                   leftMoves += ((currentCharacter.index+1)*16 - numberOfTurns);
                                   setHighestScore(numberOfTotalFlagFound);
